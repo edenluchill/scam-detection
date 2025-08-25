@@ -441,16 +441,10 @@ export default function Home() {
                           {step.result ? (
                             <div className="relative">
                               {getResultIcon(step.result.severity)}
-                              {step.status === "completed" && (
-                                <div className="absolute inset-0 rounded-full animate-ping bg-green-400/20"></div>
-                              )}
                             </div>
                           ) : (
                             getStepSpecificIcon(step.id, step.status)
                           )}
-                        </div>
-                        <div className="text-xs text-gray-500 mt-1 font-medium">
-                          {index + 1}
                         </div>
                       </div>
 
