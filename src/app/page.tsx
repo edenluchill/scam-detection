@@ -170,71 +170,71 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
-      {/* Animated background elements */}
+      {/* Animated background elements - 优化移动端显示 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-400/5 rounded-full blur-3xl animate-pulse delay-500"></div>
+        <div className="absolute top-10 left-5 sm:top-20 sm:left-20 w-48 h-48 sm:w-72 sm:h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-5 sm:bottom-20 sm:right-20 w-64 h-64 sm:w-96 sm:h-96 bg-indigo-400/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-64 sm:h-64 bg-purple-400/5 rounded-full blur-3xl animate-pulse delay-500"></div>
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
+        <div className="flex flex-col items-center justify-center min-h-screen py-8">
           {/* 初始搜索页面 */}
           {!loading && analysisSteps.length === 0 && !summary && (
             <div className="w-full max-w-2xl">
-              {/* Logo with AI elements */}
-              <div className="text-center mb-8">
-                <div className="flex items-center justify-center mb-6 relative">
+              {/* Logo with AI elements - 优化移动端 */}
+              <div className="text-center mb-6 sm:mb-8">
+                <div className="flex items-center justify-center mb-4 sm:mb-6 relative">
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-full blur-lg opacity-30 animate-pulse"></div>
-                    <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 p-4 rounded-2xl shadow-2xl">
-                      <Shield className="h-12 w-12 text-white" />
+                    <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 p-3 sm:p-4 rounded-2xl shadow-2xl">
+                      <Shield className="h-8 w-8 sm:h-12 sm:w-12 text-white" />
                     </div>
                   </div>
-                  <div className="absolute -top-2 -right-2">
-                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-1.5 rounded-full shadow-lg animate-bounce">
-                      <Sparkles className="h-4 w-4 text-white" />
+                  <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2">
+                    <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-1 sm:p-1.5 rounded-full shadow-lg animate-bounce">
+                      <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
                     </div>
                   </div>
                 </div>
-                <h1 className="text-6xl font-extralight bg-gradient-to-r from-gray-800 via-blue-800 to-indigo-800 bg-clip-text text-transparent mb-3">
+                <h1 className="text-3xl sm:text-4xl md:text-6xl font-extralight bg-gradient-to-r from-gray-800 via-blue-800 to-indigo-800 bg-clip-text text-transparent mb-2 sm:mb-3">
                   AI 诈骗检测
                 </h1>
-                <p className="text-lg text-gray-600 font-light">
+                <p className="text-base sm:text-lg text-gray-600 font-light px-4">
                   智能分析邮箱地址和电话号码的安全性
                 </p>
-                <div className="flex items-center justify-center mt-3 text-sm text-gray-500">
+                <div className="flex items-center justify-center mt-2 sm:mt-3 text-sm text-gray-500">
                   <Brain className="h-4 w-4 mr-2 text-blue-500" />
                   由人工智能驱动
                 </div>
               </div>
 
-              {/* Enhanced Search Bar */}
-              <div className="relative mb-8">
+              {/* Enhanced Search Bar - 优化移动端 */}
+              <div className="relative mb-6 sm:mb-8">
                 <div className="group relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition-opacity"></div>
-                  <div className="relative flex items-center bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl px-6 py-4 shadow-2xl hover:shadow-3xl transition-all duration-300 focus-within:shadow-3xl focus-within:bg-white/90">
-                    <Search className="h-5 w-5 text-gray-400 mr-4 transition-colors group-focus-within:text-blue-500" />
+                  <div className="relative flex items-center bg-white/80 backdrop-blur-sm border border-white/50 rounded-2xl px-4 sm:px-6 py-3 sm:py-4 shadow-2xl hover:shadow-3xl transition-all duration-300 focus-within:shadow-3xl focus-within:bg-white/90">
+                    <Search className="h-4 w-4 sm:h-5 sm:w-5 text-gray-400 mr-3 sm:mr-4 transition-colors group-focus-within:text-blue-500 flex-shrink-0" />
                     <Input
                       type="text"
-                      placeholder="输入邮箱地址或电话号码进行AI分析"
+                      placeholder="输入邮箱地址或电话号码"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       onKeyDown={(e) =>
                         e.key === "Enter" && !loading && handleAnalyze()
                       }
-                      className="flex-1 border-0 focus:outline-none focus:ring-0 text-lg bg-transparent placeholder:text-gray-400"
+                      className="flex-1 border-0 focus:outline-none focus:ring-0 text-base sm:text-lg bg-transparent placeholder:text-gray-400"
                     />
                   </div>
                 </div>
               </div>
 
-              {/* Enhanced Search Button */}
+              {/* Enhanced Search Button - 优化移动端 */}
               <div className="text-center space-x-4">
                 <Button
                   onClick={handleAnalyze}
                   disabled={loading}
-                  className="group relative px-8 py-4 text-sm rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
+                  className="group relative px-6 sm:px-8 py-3 sm:py-4 text-sm rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:hover:scale-100"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-xl blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
                   <div className="relative flex items-center">
@@ -246,34 +246,34 @@ export default function Home() {
 
               {/* Error Message */}
               {error && (
-                <div className="text-center mt-6 p-4 bg-red-50/80 backdrop-blur-sm border border-red-200/50 rounded-xl text-red-600 text-sm shadow-lg">
+                <div className="text-center mt-4 sm:mt-6 p-3 sm:p-4 bg-red-50/80 backdrop-blur-sm border border-red-200/50 rounded-xl text-red-600 text-sm shadow-lg mx-2">
                   {error}
                 </div>
               )}
             </div>
           )}
 
-          {/* 分析进行中或已完成 */}
+          {/* 分析进行中或已完成 - 优化移动端 */}
           {(loading || analysisSteps.length > 0) && (
             <div className="w-full max-w-4xl">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-8 pb-6 border-b border-gray-200/50">
+              {/* Header - 优化移动端 */}
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8 pb-4 sm:pb-6 border-b border-gray-200/50 space-y-4 sm:space-y-0">
                 <div className="flex items-center">
                   <div className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur opacity-30"></div>
-                    <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 p-3 rounded-xl shadow-lg">
+                    <div className="relative bg-gradient-to-r from-blue-600 to-indigo-600 p-2 sm:p-3 rounded-xl shadow-lg">
                       <Brain
-                        className={`h-8 w-8 text-white ${
+                        className={`h-6 w-6 sm:h-8 sm:w-8 text-white ${
                           loading ? "animate-pulse" : ""
                         }`}
                       />
                     </div>
                   </div>
                   <div className="ml-3">
-                    <h1 className="text-3xl font-light bg-gradient-to-r from-gray-800 to-blue-800 bg-clip-text text-transparent">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl font-light bg-gradient-to-r from-gray-800 to-blue-800 bg-clip-text text-transparent">
                       {loading ? "AI 正在分析中..." : "AI 分析完成"}
                     </h1>
-                    <p className="text-gray-600 font-mono text-lg mt-1">
+                    <p className="text-gray-600 font-mono text-sm sm:text-base md:text-lg mt-1 break-all">
                       {query}
                     </p>
                   </div>
@@ -283,54 +283,74 @@ export default function Home() {
                     onClick={handleNewSearch}
                     variant="outline"
                     size="sm"
-                    className="rounded-xl border-gray-200 hover:bg-gray-50 transition-all duration-200"
+                    className="rounded-xl border-gray-200 hover:bg-gray-50 transition-all duration-200 w-full sm:w-auto"
                   >
                     新搜索
                   </Button>
                 )}
               </div>
 
-              {/* Analysis Steps */}
-              <div className="space-y-4 mb-8">
+              {/* Analysis Steps - 优化移动端间距 */}
+              <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
                 {analysisSteps.map((step) => (
                   <div
                     key={step.id}
-                    className={`bg-white/60 backdrop-blur-sm border border-white/50 rounded-xl p-4 shadow-lg transition-all duration-300 ${
+                    className={`bg-white/60 backdrop-blur-sm border border-white/50 rounded-xl p-3 sm:p-4 shadow-lg transition-all duration-300 ${
                       step.status === "running"
                         ? "ring-2 ring-blue-500/50 bg-blue-50/60"
                         : ""
                     }`}
                   >
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        {getStepIcon(step.status)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-medium text-gray-800">
-                            {step.name}
-                          </h3>
-                          <Badge
-                            variant={
-                              step.status === "completed"
-                                ? "outline"
-                                : step.status === "running"
-                                ? "default"
-                                : step.status === "error"
-                                ? "destructive"
-                                : "secondary"
-                            }
-                            className={`text-xs ${
-                              step.status === "running"
-                                ? "bg-blue-500 text-white animate-pulse"
-                                : ""
-                            }`}
-                          >
-                            {step.status === "pending" && "等待中"}
-                            {step.status === "running" && "分析中"}
-                            {step.status === "completed" && "已完成"}
-                            {step.status === "error" && "错误"}
-                          </Badge>
+                    <div className="flex items-center space-x-3 sm:space-x-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                          {/* 整合图标和标题 */}
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0">
+                              {step.result
+                                ? getResultIcon(step.result.severity)
+                                : getStepIcon(step.status)}
+                            </div>
+                            <h3 className="font-medium text-gray-800 text-sm sm:text-base">
+                              {step.name}
+                            </h3>
+                          </div>
+
+                          {/* 只有在非completed状态或者没有result时才显示状态标签 */}
+                          {(step.status !== "completed" || !step.result) && (
+                            <Badge
+                              variant={
+                                step.status === "completed"
+                                  ? "outline"
+                                  : step.status === "running"
+                                  ? "default"
+                                  : step.status === "error"
+                                  ? "destructive"
+                                  : "secondary"
+                              }
+                              className={`text-xs w-fit ${
+                                step.status === "running"
+                                  ? "bg-blue-500 text-white animate-pulse"
+                                  : ""
+                              }`}
+                            >
+                              {step.status === "pending" && "等待中"}
+                              {step.status === "running" && "分析中"}
+                              {step.status === "completed" && "已完成"}
+                              {step.status === "error" && "错误"}
+                            </Badge>
+                          )}
+                          {/* 如果有result，直接显示结果标签 */}
+                          {step.result && (
+                            <Badge
+                              variant={getResultBadgeVariant(
+                                step.result.severity
+                              )}
+                              className="text-xs w-fit"
+                            >
+                              {getResultLabel(step.result.severity)}
+                            </Badge>
+                          )}
                         </div>
                         {step.message && (
                           <p className="text-sm text-gray-600 mt-1">
@@ -339,25 +359,14 @@ export default function Home() {
                         )}
                         {step.result && (
                           <div className="mt-3 p-3 bg-gray-50/80 rounded-lg">
-                            <div className="flex items-center space-x-2 mb-2">
-                              {getResultIcon(step.result.severity)}
-                              <Badge
-                                variant={getResultBadgeVariant(
-                                  step.result.severity
-                                )}
-                                className="text-xs"
-                              >
-                                {getResultLabel(step.result.severity)}
-                              </Badge>
-                              <span className="text-sm text-gray-600 font-medium">
-                                {step.result.source}
-                              </span>
-                              {step.result.date && (
+                            {/* 移除重复的header，只保留日期信息 */}
+                            {/* {step.result.date && (
+                              <div className="flex justify-end mb-2">
                                 <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
                                   {step.result.date}
                                 </span>
-                              )}
-                            </div>
+                              </div>
+                            )} */}
                             <p className="text-sm text-gray-700">
                               {step.result.content}
                             </p>
@@ -382,22 +391,22 @@ export default function Home() {
                 ))}
               </div>
 
-              {/* 分析总结 */}
+              {/* 分析总结 - 优化移动端 */}
               {summary && (
-                <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 backdrop-blur-sm border border-blue-200/50 rounded-2xl p-6 shadow-lg mb-8">
-                  <div className="flex items-center mb-4">
+                <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 backdrop-blur-sm border border-blue-200/50 rounded-2xl p-4 sm:p-6 shadow-lg mb-6 sm:mb-8">
+                  <div className="flex items-center mb-3 sm:mb-4">
                     <div className="relative">
                       <div className="absolute inset-0 bg-blue-500/20 rounded-full blur"></div>
-                      <Brain className="relative h-6 w-6 text-blue-600" />
+                      <Brain className="relative h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                     </div>
-                    <h3 className="ml-3 text-lg font-semibold text-gray-800">
+                    <h3 className="ml-3 text-base sm:text-lg font-semibold text-gray-800">
                       AI 分析总结
                     </h3>
                   </div>
-                  <p className="text-gray-700 text-lg leading-relaxed mb-4">
+                  <p className="text-gray-700 text-base sm:text-lg leading-relaxed mb-3 sm:mb-4">
                     {summary.recommendation}
                   </p>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-gray-500">风险评分：</span>
                       <Badge
@@ -417,14 +426,14 @@ export default function Home() {
                 </div>
               )}
 
-              {/* 添加内容选项 */}
+              {/* 添加内容选项 - 优化移动端 */}
               {showAddContent && (
-                <div className="bg-white/60 backdrop-blur-sm border border-white/50 rounded-2xl p-6 shadow-lg">
+                <div className="bg-white/60 backdrop-blur-sm border border-white/50 rounded-2xl p-4 sm:p-6 shadow-lg">
                   <div className="text-center mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
                       想要更深入的分析吗？
                     </h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 text-sm px-2">
                       您可以添加更多信息（如聊天记录、邮件内容等），让AI分析其诈骗可能性
                     </p>
                   </div>
@@ -436,15 +445,15 @@ export default function Home() {
                         placeholder="请输入要分析的聊天记录、邮件内容或其他相关信息..."
                         value={additionalContent}
                         onChange={(e) => setAdditionalContent(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl resize-none h-24 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white/80"
+                        className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl resize-none h-20 sm:h-24 focus:outline-none focus:ring-2 focus:ring-blue-500/50 bg-white/80 text-sm"
                       />
                     </div>
 
-                    <div className="flex space-x-3">
+                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-3">
                       <Button
                         onClick={handleAddContent}
                         disabled={!additionalContent.trim()}
-                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 rounded-xl"
+                        className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-700 hover:to-indigo-700 rounded-xl text-sm"
                       >
                         <Plus className="h-4 w-4 mr-2" />
                         开始AI内容分析
@@ -452,7 +461,7 @@ export default function Home() {
                       <Button
                         onClick={() => setShowAddContent(false)}
                         variant="outline"
-                        className="rounded-xl"
+                        className="rounded-xl sm:w-auto text-sm"
                       >
                         暂不需要
                       </Button>
@@ -461,14 +470,14 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Footer */}
-              <div className="mt-8 text-center text-gray-500 text-sm border-t border-gray-200/50 pt-6">
-                <div className="bg-amber-50/60 backdrop-blur-sm border border-amber-200/50 rounded-xl p-4 inline-block">
-                  <p className="flex items-center justify-center text-amber-700">
-                    <AlertTriangle className="h-4 w-4 mr-2" />此 AI
-                    工具仅供参考，请结合其他信息做出判断
+              {/* Footer - 优化移动端 */}
+              <div className="mt-6 sm:mt-8 text-center text-gray-500 text-sm border-t border-gray-200/50 pt-4 sm:pt-6">
+                <div className="bg-amber-50/60 backdrop-blur-sm border border-amber-200/50 rounded-xl p-3 sm:p-4 inline-block mx-2">
+                  <p className="flex items-center justify-center text-amber-700 text-xs sm:text-sm">
+                    <AlertTriangle className="h-4 w-4 mr-2 flex-shrink-0" />此
+                    AI 工具仅供参考，请结合其他信息做出判断
                   </p>
-                  <p className="mt-2 text-amber-600">
+                  <p className="mt-2 text-amber-600 text-xs sm:text-sm">
                     遇到诈骗请及时向相关部门举报
                   </p>
                 </div>
