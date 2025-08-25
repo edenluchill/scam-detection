@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,12 @@ import {
   Clock,
   Plus,
   MessageSquare,
+  Zap,
+  Target,
+  Globe,
+  Users,
+  MessageCircle,
+  Database,
 } from "lucide-react";
 import type { AnalysisStep, AnalysisSummary } from "./api/analyze/route";
 
@@ -28,6 +34,26 @@ export default function Home() {
   const [summary, setSummary] = useState<AnalysisSummary | null>(null);
   const [showAddContent, setShowAddContent] = useState(false);
   const [additionalContent, setAdditionalContent] = useState("");
+  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+
+  // 添加完成动画效果
+  useEffect(() => {
+    analysisSteps.forEach((step) => {
+      if (step.status === "completed" && !completedSteps.has(step.id)) {
+        setCompletedSteps((prev) => new Set(Array.from(prev).concat(step.id)));
+        // 触发完成动画
+        setTimeout(() => {
+          const element = document.getElementById(`step-${step.id}`);
+          if (element) {
+            element.classList.add("animate-completion");
+            setTimeout(() => {
+              element.classList.remove("animate-completion");
+            }, 1000);
+          }
+        }, 100);
+      }
+    });
+  }, [analysisSteps, completedSteps]);
 
   const handleAnalyze = async () => {
     if (!query.trim()) {
@@ -40,6 +66,7 @@ export default function Home() {
     setAnalysisSteps([]);
     setSummary(null);
     setShowAddContent(false);
+    setCompletedSteps(new Set());
 
     try {
       const response = await fetch("/api/analyze", {
@@ -115,6 +142,7 @@ export default function Home() {
     setSummary(null);
     setShowAddContent(false);
     setAdditionalContent("");
+    setCompletedSteps(new Set());
   };
 
   const handleAddContent = () => {
@@ -155,7 +183,7 @@ export default function Home() {
     }
   };
 
-  const getStepIcon = (status: AnalysisStep["status"]) => {
+  const getStepIcon = (status: AnalysisStep["status"], stepId: string) => {
     switch (status) {
       case "pending":
         return <Clock className="h-4 w-4 text-gray-400" />;
@@ -168,8 +196,97 @@ export default function Home() {
     }
   };
 
+  // 获取步骤特定图标
+  const getStepSpecificIcon = (
+    stepId: string,
+    status: AnalysisStep["status"]
+  ) => {
+    if (status === "running") {
+      return <LoadingSpinner size="sm" />;
+    }
+
+    const iconClass = "h-4 w-4";
+    const completedClass =
+      status === "completed" ? "text-blue-600" : "text-gray-400";
+
+    switch (stepId) {
+      case "google":
+        return <Globe className={`${iconClass} ${completedClass}`} />;
+      case "social":
+        return <Users className={`${iconClass} ${completedClass}`} />;
+      case "forums":
+        return <MessageCircle className={`${iconClass} ${completedClass}`} />;
+      case "blacklist":
+        return <Database className={`${iconClass} ${completedClass}`} />;
+      case "analysis":
+        return <Brain className={`${iconClass} ${completedClass}`} />;
+      default:
+        return <Target className={`${iconClass} ${completedClass}`} />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      {/* 添加CSS动画样式 */}
+      <style jsx>{`
+        @keyframes completion {
+          0% {
+            transform: scale(1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          }
+          50% {
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.2),
+              0 10px 10px -5px rgba(59, 130, 246, 0.04);
+          }
+          100% {
+            transform: scale(1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          }
+        }
+
+        @keyframes success-glow {
+          0% {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.4);
+          }
+          70% {
+            box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+          }
+          100% {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+          }
+        }
+
+        @keyframes slide-in-result {
+          0% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .animate-completion {
+          animation: completion 0.6s ease-in-out, success-glow 0.8s ease-out;
+        }
+
+        .result-slide-in {
+          animation: slide-in-result 0.4s ease-out;
+        }
+
+        .step-card {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+            0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+      `}</style>
+
       {/* Animated background elements - 优化移动端显示 */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-10 left-5 sm:top-20 sm:left-20 w-48 h-48 sm:w-72 sm:h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
@@ -290,96 +407,135 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Analysis Steps - 优化移动端间距 */}
+              {/* Analysis Steps - 优化移动端间距和动画 */}
               <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-                {analysisSteps.map((step) => (
+                {analysisSteps.map((step, index) => (
                   <div
                     key={step.id}
-                    className={`bg-white/60 backdrop-blur-sm border border-white/50 rounded-xl p-3 sm:p-4 shadow-lg transition-all duration-300 ${
+                    id={`step-${step.id}`}
+                    className={`step-card bg-white/60 backdrop-blur-sm border border-white/50 rounded-xl p-4 sm:p-5 shadow-lg transition-all duration-500 transform ${
                       step.status === "running"
-                        ? "ring-2 ring-blue-500/50 bg-blue-50/60"
+                        ? "ring-2 ring-blue-500/50 bg-blue-50/60 scale-[1.02]"
+                        : step.status === "completed"
+                        ? "bg-green-50/40 border-green-200/50"
                         : ""
                     }`}
+                    style={{
+                      animationDelay: `${index * 100}ms`,
+                    }}
                   >
-                    <div className="flex items-center space-x-3 sm:space-x-4">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                          {/* 整合图标和标题 */}
-                          <div className="flex items-center space-x-3">
-                            <div className="flex-shrink-0">
-                              {step.result
-                                ? getResultIcon(step.result.severity)
-                                : getStepIcon(step.status)}
-                            </div>
-                            <h3 className="font-medium text-gray-800 text-sm sm:text-base">
-                              {step.name}
-                            </h3>
-                          </div>
-
-                          {/* 只有在非completed状态或者没有result时才显示状态标签 */}
-                          {(step.status !== "completed" || !step.result) && (
-                            <Badge
-                              variant={
-                                step.status === "completed"
-                                  ? "outline"
-                                  : step.status === "running"
-                                  ? "default"
-                                  : step.status === "error"
-                                  ? "destructive"
-                                  : "secondary"
-                              }
-                              className={`text-xs w-fit ${
-                                step.status === "running"
-                                  ? "bg-blue-500 text-white animate-pulse"
-                                  : ""
-                              }`}
-                            >
-                              {step.status === "pending" && "等待中"}
-                              {step.status === "running" && "分析中"}
-                              {step.status === "completed" && "已完成"}
-                              {step.status === "error" && "错误"}
-                            </Badge>
-                          )}
-                          {/* 如果有result，直接显示结果标签 */}
-                          {step.result && (
-                            <Badge
-                              variant={getResultBadgeVariant(
-                                step.result.severity
+                    <div className="flex items-start space-x-4">
+                      {/* 步骤编号和图标 */}
+                      <div className="flex-shrink-0 flex flex-col items-center">
+                        <div
+                          className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                            step.status === "completed"
+                              ? "bg-green-100 ring-2 ring-green-500/50"
+                              : step.status === "running"
+                              ? "bg-blue-100 ring-2 ring-blue-500/50"
+                              : step.status === "error"
+                              ? "bg-red-100 ring-2 ring-red-500/50"
+                              : "bg-gray-100"
+                          }`}
+                        >
+                          {step.result ? (
+                            <div className="relative">
+                              {getResultIcon(step.result.severity)}
+                              {step.status === "completed" && (
+                                <div className="absolute inset-0 rounded-full animate-ping bg-green-400/20"></div>
                               )}
-                              className="text-xs w-fit"
-                            >
-                              {getResultLabel(step.result.severity)}
-                            </Badge>
+                            </div>
+                          ) : (
+                            getStepSpecificIcon(step.id, step.status)
                           )}
                         </div>
-                        {step.message && (
-                          <p className="text-sm text-gray-600 mt-1">
-                            {step.message}
-                          </p>
-                        )}
+                        <div className="text-xs text-gray-500 mt-1 font-medium">
+                          {index + 1}
+                        </div>
+                      </div>
+
+                      {/* 步骤内容 */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+                          <div className="flex-1">
+                            <h3 className="font-semibold text-gray-800 text-base sm:text-lg flex items-center">
+                              {step.name}
+                              {step.status === "completed" && (
+                                <Zap className="h-4 w-4 ml-2 text-green-500 animate-pulse" />
+                              )}
+                            </h3>
+                            {step.message && step.status === "running" && (
+                              <p className="text-sm text-blue-600 mt-1 animate-pulse">
+                                {step.message}
+                              </p>
+                            )}
+                          </div>
+
+                          {/* 状态标签 */}
+                          <div className="flex items-center space-x-2">
+                            {step.result ? (
+                              <Badge
+                                variant={getResultBadgeVariant(
+                                  step.result.severity
+                                )}
+                                className={`text-xs font-medium result-slide-in ${
+                                  step.result.severity === "high"
+                                    ? "bg-red-100 text-red-700 border-red-300"
+                                    : step.result.severity === "medium"
+                                    ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+                                    : "bg-green-100 text-green-700 border-green-300"
+                                }`}
+                              >
+                                {getResultLabel(step.result.severity)}
+                              </Badge>
+                            ) : step.status !== "completed" ? (
+                              <Badge
+                                variant={
+                                  step.status === "running"
+                                    ? "default"
+                                    : step.status === "error"
+                                    ? "destructive"
+                                    : "secondary"
+                                }
+                                className={`text-xs ${
+                                  step.status === "running"
+                                    ? "bg-blue-500 text-white animate-pulse"
+                                    : ""
+                                }`}
+                              >
+                                {step.status === "pending" && "等待中"}
+                                {step.status === "running" && "分析中"}
+                                {step.status === "error" && "错误"}
+                              </Badge>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        {/* 结果内容 */}
                         {step.result && (
-                          <div className="mt-3 p-3 bg-gray-50/80 rounded-lg">
-                            {/* 移除重复的header，只保留日期信息 */}
-                            {/* {step.result.date && (
-                              <div className="flex justify-end mb-2">
-                                <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">
+                          <div className="mt-4 p-4 bg-gradient-to-r from-gray-50/80 to-white/80 rounded-lg border border-gray-200/50 result-slide-in">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <p className="text-sm text-gray-700 leading-relaxed">
+                                  {step.result.content}
+                                </p>
+                              </div>
+                              {step.result.date && (
+                                <span className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full ml-3 flex-shrink-0">
                                   {step.result.date}
                                 </span>
-                              </div>
-                            )} */}
-                            <p className="text-sm text-gray-700">
-                              {step.result.content}
-                            </p>
+                              )}
+                            </div>
                             {step.result.url && (
-                              <div className="mt-2">
+                              <div className="mt-3 pt-3 border-t border-gray-200/50">
                                 <a
                                   href={step.result.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                                  className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors hover:underline"
                                 >
                                   <ExternalLink className="h-3 w-3 mr-1" />
-                                  查看详情
+                                  查看详细信息
                                 </a>
                               </div>
                             )}
@@ -393,10 +549,10 @@ export default function Home() {
 
               {/* 分析总结 - 优化移动端 */}
               {summary && (
-                <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 backdrop-blur-sm border border-blue-200/50 rounded-2xl p-4 sm:p-6 shadow-lg mb-6 sm:mb-8">
+                <div className="bg-gradient-to-r from-blue-50/80 to-indigo-50/80 backdrop-blur-sm border border-blue-200/50 rounded-2xl p-4 sm:p-6 shadow-lg mb-6 sm:mb-8 result-slide-in">
                   <div className="flex items-center mb-3 sm:mb-4">
                     <div className="relative">
-                      <div className="absolute inset-0 bg-blue-500/20 rounded-full blur"></div>
+                      <div className="absolute inset-0 bg-blue-500/20 rounded-full blur animate-pulse"></div>
                       <Brain className="relative h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                     </div>
                     <h3 className="ml-3 text-base sm:text-lg font-semibold text-gray-800">
@@ -417,7 +573,7 @@ export default function Home() {
                             ? "secondary"
                             : "outline"
                         }
-                        className="font-semibold"
+                        className="font-semibold text-base px-3 py-1"
                       >
                         {Math.round(summary.riskScore)}/100
                       </Badge>
@@ -428,7 +584,7 @@ export default function Home() {
 
               {/* 添加内容选项 - 优化移动端 */}
               {showAddContent && (
-                <div className="bg-white/60 backdrop-blur-sm border border-white/50 rounded-2xl p-4 sm:p-6 shadow-lg">
+                <div className="bg-white/60 backdrop-blur-sm border border-white/50 rounded-2xl p-4 sm:p-6 shadow-lg result-slide-in">
                   <div className="text-center mb-4">
                     <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
                       想要更深入的分析吗？
